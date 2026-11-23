@@ -28,7 +28,7 @@ API授权: all
 密钥类型: 用户令牌密钥
 状态: 已启用
 访问令牌有效期: 跟随登陆会话
-重定向地址: http://localhost:5001/auth/callback,http://localhost:5001/auth/logout/callback
+重定向地址: http://localhost:5002/auth/callback,http://localhost:5002/auth/logout/callback
 要求PKCE(S256): 开启
 Scopes: openid all read write
 调用方源 IP/CIDR 白名单: <空>
