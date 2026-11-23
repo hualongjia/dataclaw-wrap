@@ -5,27 +5,23 @@ Dataclaw-Admin 在 Auth3 配置了2个应用, 分别是本地调试的 `dataclaw
 
 # dataclaw-admin localhost
 
-## 本机调试 dataclaw-admin localhost
+## 应用
 
 应用名称: dataclaw-admin 本机开发
 应用编码: dataclaw-admin-localhost
-所属分类: Oauth2
-访问地址: http://localhost:3131
+所属分类: Dataclaw智能体矩阵
+访问地址: http://localhost:5001
 应用描述: <空>
 权限码: 本地 dataclaw-admin-server/docs/98-AuthPerm/权限码.json 及 dev/ 对应文件已准备，登记 dataclaw-admin:directory-sync 分组及 view/create/update/delete/run 五个动作；auth3 管理端待核验
 角色: 待在 auth3 登记 dataclaw-admin-system-admin（系统管理员）和 dataclaw-admin-user（普通用户）；系统管理员绑定目录同步分组及五个动作权限，普通用户不授予同步管理权限。模型访问仍需模型授权
 数据资源: 空
-API授权:
-    - 登出	补充API授权	auth.logout
-    - 令牌内省	补充API授权	oauth.introspect
-    - 租户基本信息	补充API授权	tenant.detail
-    - 查询本人基本信息	补充API授权	me.profile
+API授权: all
 关联租户:
     - leaf_auth_dev/数研/省委办局
 访问授权: <只读>
 
 
-## 本机调试 dataclaw-admin localhost (用户令牌)
+## 用户令牌
 客户端名称: dataclaw-admin 本机调试
 密钥名称: dataclaw-admin-user-localhost
 密钥类型: 用户令牌密钥
@@ -39,7 +35,7 @@ Scopes: openid all read write
 ClientID: jknA4D6fIDxRYC1k5Zj1eaEI
 Client Secret: UO+<}g-qP9zFPGdwz|jwv;Lq1#}]>%+oAdz3}_G!tE5>EsGf
 
-## 本机调试 dataclaw-admin localhost (客户端令牌)
+## 机器令牌
 客户端名称: dataclaw-admin本机开发
 密钥名称: dataclaw-admin-service-localhost
 密钥类型: 客户端令牌密钥
@@ -57,10 +53,11 @@ Client Secret: P%P2J1p@^MxT#gW9s;LW{6tA5Kkur_p*YFg!PdI_t4%lZEpW
 
 ## dataclaw-admin DEV
 
+## 应用
 应用名称: dataclaw-admin DEV
 应用编码: dataclaw-admin-dev
-所属分类: Oauth2
-访问地址: http://dataclaw-admin0-auth3.dev.jinxin.cloud/
+所属分类: Dataclaw智能体矩阵
+访问地址: http://agent-os.dev.jinxin.cloud
 应用描述: <空>
 权限码: 本地 dataclaw-admin-server/docs/98-AuthPerm/权限码.json 及 dev/ 对应文件已准备，登记 dataclaw-admin:directory-sync 分组及 view/create/update/delete/run 五个动作；auth3 管理端待核验
 角色: 待在 auth3 登记 dataclaw-admin-system-admin（系统管理员）和 dataclaw-admin-user（普通用户）；系统管理员绑定目录同步分组及五个动作权限，普通用户不授予同步管理权限。模型访问仍需模型授权
@@ -72,7 +69,7 @@ API授权: all
 访问授权: <只读>
 
 
-## dataclaw-admin DEV（用户令牌）
+## 用户令牌
 客户端名称: dataclaw-admin DEV
 密钥名称: dataclaw-admin-user-dev
 密钥类型: 用户令牌密钥
@@ -86,7 +83,7 @@ Scopes: openid all read write
 ClientID: 7bvDzWMj4L0OzL72BUV1HQRF
 Client Secret: 2jCk%?hldlNXsXed)pTEeK9*Rgvl%aS:ka0Pg1:JN5S>aJFd
 
-## dataclaw-admin DEV（客户端令牌）
+## 机器端令牌
 客户端名称: dataclaw-admin DEV 机器客户端
 密钥名称: dataclaw-admin-service-dev
 密钥类型: 客户端令牌密钥

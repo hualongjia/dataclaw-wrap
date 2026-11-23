@@ -4,21 +4,17 @@ Dataclaw-Admin 在 Auth3 配置了2个应用, 分别是本地调试的 `dataclaw
 
 # dataclaw-desktop localhost
 
-## 本机调试 dataclaw-desktop localhost
+## 本机调试应用
 
 应用名称: dataclaw-desktop 本机开发
 应用编码: dataclaw-desktop-localhost
-所属分类: Oauth2
-访问地址: http://localhost:3131
+所属分类: Dataclaw智能体矩阵
+访问地址: http://localhost:5173
 应用描述: <空>
-权限码: 本地 dataclaw-desktop-server/docs/98-AuthPerm/权限码.json 及 dev/ 对应文件已准备，登记 dataclaw-desktop:directory-sync 分组及 view/create/update/delete/run 五个动作；auth3 管理端待核验
-角色: 待在 auth3 登记 dataclaw-desktop-system-admin（系统管理员）和 dataclaw-desktop-user（普通用户）；系统管理员绑定目录同步分组及五个动作权限，普通用户不授予同步管理权限。模型访问仍需模型授权
+权限码: <空>
+角色: <空>
 数据资源: 空
-API授权:
-    - 登出	补充API授权	auth.logout
-    - 令牌内省	补充API授权	oauth.introspect
-    - 租户基本信息	补充API授权	tenant.detail
-    - 查询本人基本信息	补充API授权	me.profile
+API授权: <all>
 关联租户:
     - leaf_auth_dev/数研/省委办局
 访问授权: <只读>
@@ -54,12 +50,12 @@ Client Secret: P%P2J1p@^MxT#gW9s;LW{6tA5Kkur_p*YFg!PdI_t4%lZEpW
 ---
 
 
-## dataclaw-desktop DEV
+## DEV 应用
 
 应用名称: dataclaw-desktop DEV
 应用编码: dataclaw-desktop-dev
-所属分类: Oauth2
-访问地址: http://dataclaw-desktop0-auth3.dev.jinxin.cloud/
+所属分类: Dataclaw智能体矩阵
+访问地址: http://dataclaw-desktop-auth3.dev.jinxin.cloud/
 应用描述: <空>
 权限码: 本地 dataclaw-desktop-server/docs/98-AuthPerm/权限码.json 及 dev/ 对应文件已准备，登记 dataclaw-desktop:directory-sync 分组及 view/create/update/delete/run 五个动作；auth3 管理端待核验
 角色: 待在 auth3 登记 dataclaw-desktop-system-admin（系统管理员）和 dataclaw-desktop-user（普通用户）；系统管理员绑定目录同步分组及五个动作权限，普通用户不授予同步管理权限。模型访问仍需模型授权
