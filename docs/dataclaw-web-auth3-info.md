@@ -10,7 +10,7 @@ Dataclaw-Web 在 Auth3 配置了2个应用, 分别是本地调试的 `dataclaw-w
 应用名称: dataclaw-web 本机开发
 应用编码: dataclaw-web-localhost
 所属分类: Dataclaw智能体矩阵
-访问地址: http://localhost:3131
+访问地址: http://localhost:5001
 应用描述: <空>
 权限码: 
 角色: 
@@ -28,7 +28,7 @@ API授权:
 密钥类型: 用户令牌密钥
 状态: 已启用
 访问令牌有效期: 跟随会话
-重定向地址: http://localhost:3131/auth/callback,http://localhost:3131/auth/logout/callback
+重定向地址: http://localhost:5001/auth/callback,http://localhost:5001/auth/logout/callback
 要求PKCE(S256): 开启
 Scopes: openid all read write
 调用方源 IP/CIDR 白名单: <空>
@@ -66,7 +66,7 @@ API授权: all
 密钥类型: 用户令牌密钥
 状态: 已启用
 访问令牌有效期: 跟随登陆会话
-重定向地址: http://dataclaw.dev.jinxin.cloud/auth/callback,http://http://dataclaw.dev.jinxin.cloud/auth/logout/callback
+重定向地址: http://dataclaw.dev.jinxin.cloud/auth/callback,http://dataclaw.dev.jinxin.cloud/auth/logout/callback
 要求PKCE(S256): 开启
 Scopes: openid all read write
 调用方源 IP/CIDR 白名单: <空>
