@@ -13,8 +13,18 @@ AuthController 已有三条换票路由，共用 AuthService。两个浏览器�
 1. 每个登录事务记录目标端、一次性 state、verifier 和返回地址。管理端建议使用 /auth/admin/callback，用户端使用 /auth/web/callback，桌面沿用 dataclaw://auth/callback。桌面统一通过系统浏览器进行 OAuth 登录，移除账号密码表单、preload/IPC 密码入口和旧密码协议调用，不增加密码代登机器凭证。分别调用现有 /api/v1/{admin,web,desktop}/auth/token，服务端按目标选择 Client，以完全匹配的 redirect_uri 调用 Auth3 /oauth/token。隔离两端浏览器会话，处理失败、登出及切租户后缓存失效；采用滑动策略时允许省略 refresh_token，以 Auth3 租约验证为准，参照 p3demo 区分用户活动与后台轮询。
 2. 封装服务端机器凭证获取及过期更新。模型 API 用机器令牌调用 /api/v3/oauth/introspect 并验证用户主体；其余 AppKey、供应商、用户密钥和 quotaContext 逻辑沿用。对其他用户接口按调用端校验身份和应用权限，避免把模型 API 的外部令牌规则扩展到后台管理。
 3. 保留前端已有用户查询契约，在适配层转换 Auth3 的本人资料、授权租户、用户分页与批量人员查询结果。记忆管理用机器令牌和来自验证上下文的 X-Tenant-Id 调用 GET /api/v3/orgs/tree（org.tree），直接取 data 顶层 orgId，保留孤立父节点语义。定时消息对照现有 AuthMessageService 的收件人、渠道、附件、失败反馈逐项适配。
-4. 管理写操作调用 /api/v3/app/*，令牌归属固定为 dataclaw-admin，成员受其当前租户约束。复用现有 permission guard、权限码和 usePermission，读取有效权限时按管理应用过滤。角色权限矩阵保存完整绑定，成员跨页增删提交差量；应用管理员资格与本地同步权限分别检查。
+4. 管理写操作调用 /api/v3/app/*，令牌归属固定为 dataclaw-admin，成员受其当前租户约束。角色管理采用统一资格查询：服务端从已验证用户身份取得角色 ID，按部署时在管理应用角色目录中核实的系统管理员角色 ID 与编码匹配。前端依据资格结果显示菜单、开放路由和操作按钮。角色、权限码、绑定及成员的每次管理读写均在服务端重新校验同一资格，替换这些入口原有的逐动作权限码门槛。同步、审计等业务入口继续按各自权限码授权。角色权限矩阵保存完整绑定，成员跨页增删提交差量；应用管理员资格与本地同步权限分别检查。
 5. 参考 p3demo 全局目标配置、执行历史及逐租户结果模型。通过数据库唯一约束控制有效目标和目录业务键（租户、租户内用户）。每次执行快照化目标；分页完整后在单目标事务内幂等更新镜像并调和失效记录。机器授权收窄或分页失败时保留旧快照。调度采用可续租锁与数据库执行代次，过期持有者无法提交；定时任务按时间槽去重，接管时记录中断。默认调度间隔建议沿用参考项目的 30 分钟。
+
+### 后台管理资格探测
+
+Auth3 的 `OpenApiAuthGuard` 在用户令牌跟随登录会话、开启滑动续期且带有 `jti` 时，会在鉴权授权通过后延长租约。这一行为覆盖 `GET /api/v3/me/full` 和 `GET /api/v3/app/roles`，即使请求携带 `x-auth3-passive: 1` 也会触发。资格查询使用机器凭证调用 `GET /api/v3/users/roles-permissions`，用户和租户取自已验证的请求身份。机器 Client 须获得 `user.roles_permissions` 接口和对应租户授权。该路径不提交用户令牌，真实环境的租约到期行为仍需联调验收。每次管理读写仍须依据当前角色绑定独立核验资格。
+
+### 滑动会话守卫
+
+认证中间件按请求用途决定是否续租（`renewActivity`），按会话模式独立决定是否允许自动刷新用户令牌（`allowRefresh`）。在 Auth3 滑动模式下，三端仅在用户交互触发对应的 `POST /api/v1/{admin,web,desktop}/auth/activity` 时续租。验票成功后复用活动处理器，使用当前用户令牌调用一次 Auth3 `/api/v3/me`。桌面端的 Bearer 活动请求适用同一规则。普通业务请求、后台轮询和恢复探测的认证流程只验票。
+
+滑动模式下所有请求的 `allowRefresh` 均为 false，即使会话带有 `refresh_token`。Auth3 判定租约失效时沿用认证失败流程，要求重新登录。
 
 ## Risks / Trade-offs
 
