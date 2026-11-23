@@ -27,25 +27,16 @@ API授权:
 密钥名称: dataclaw-web-user-localhost
 密钥类型: 用户令牌密钥
 状态: 已启用
-访问令牌有效期: 1 小时
-刷新令牌有效期: 1 天
+访问令牌有效期: 跟随会话
 重定向地址: http://localhost:3131/auth/callback,http://localhost:3131/auth/logout/callback
 要求PKCE(S256): 开启
 Scopes: openid all read write
 调用方源 IP/CIDR 白名单: <空>
-ClientID: jknA4D6fIDxRYC1k5Zj1eaEI
-Client Secret: UO+<}g-qP9zFPGdwz|jwv;Lq1#}]>%+oAdz3}_G!tE5>EsGf
+ClientID: DTn97Axwp8ABjQJXM1YmlriR
+Client Secret: 2]=+8KVt?[;EC1_=A{NmH7qcMXG5xR_7mNF7gnm5DH38z;?@
 
 ## 本机调试 dataclaw-web localhost (客户端令牌)
-客户端名称: dataclaw-web本机开发
-密钥名称: dataclaw-web-service-localhost
-密钥类型: 客户端令牌密钥
-状态: 已启用
-访问令牌有效期: 31536000 秒 (约 1 年)
-调用方源 IP/CIDR 白名单: <空>
-ClientID: mIG9VIy1YMEThICyNJ7CMod3
-Client Secret: P%P2J1p@^MxT#gW9s;LW{6tA5Kkur_p*YFg!PdI_t4%lZEpW
-
+无
 
 
 
@@ -74,35 +65,13 @@ API授权: all
 密钥名称: dataclaw-web-user-dev
 密钥类型: 用户令牌密钥
 状态: 已启用
-访问令牌有效期: 1 天
-刷新令牌有效期: 30 天
-重定向地址: http://dataclaw-web0-auth3.dev.jinxin.cloud/auth/callback,http://dataclaw-web0-auth3.dev.jinxin.cloud/auth/logout/callback
+访问令牌有效期: 跟随登陆会话
+重定向地址: http://dataclaw.dev.jinxin.cloud/auth/callback,http://http://dataclaw.dev.jinxin.cloud/auth/logout/callback
 要求PKCE(S256): 开启
 Scopes: openid all read write
 调用方源 IP/CIDR 白名单: <空>
-ClientID: 7bvDzWMj4L0OzL72BUV1HQRF
-Client Secret: 2jCk%?hldlNXsXed)pTEeK9*Rgvl%aS:ka0Pg1:JN5S>aJFd
+ClientID: YKT8Ydk9aeffZfjxcKhbF4rq
+Client Secret: {OYBUN=CrJv-uuBy(<xghQ@Agzdk$I;2:9.ciyLHpd|TCsS; 
 
 ## dataclaw-web DEV（客户端令牌）
-客户端名称: dataclaw-web DEV 机器客户端
-密钥名称: dataclaw-web-service-dev
-密钥类型: 客户端令牌密钥
-状态: 已启用
-访问令牌有效期: 31536000 秒 (约 1 年)
-调用方源 IP/CIDR 白名单: <空>
-ClientID: RlIOmkMAx5iHyJwVHtzEUA5f
-Client Secret: 4D#SJ(q#&hE}J8:JXPYHfrDeFgWahwGl@u{u$ITxEDai.yz=
-
-
-## 接口授权与登记核验
-
-以上两个应用及客户端已由用户创建。本文角色、权限、客户端名称和回调地址为目标登记配置，修改本文后还需在 auth3 管理端逐项核对。
-
-- 两个应用均需核对 `me.full`（GET /api/v3/me/full）的 API 授权，供后端查询当前用户角色、组织、组及应用权限。应用动作权限按目标 applicationId 精确匹配。
-- 机器客户端需核对 `membership.orgs`、`membership.groups` 的 API 授权及目标租户授权。这两个成员接口要求 machine_service 主体。
-- 本地现有 API 授权清单和 DEV 的 `all` 均需与实际平台 API 登记逐项核对。`me.full` 的登记码也需在当前部署确认。目录同步所需租户、用户分页接口授权随实际调用清单补充。
-- `dataclaw-web-system-admin` 绑定 `dataclaw-web:directory-sync`、`dataclaw-web:directory-sync:view`、`dataclaw-web:directory-sync:create`、`dataclaw-web:directory-sync:update`、`dataclaw-web:directory-sync:delete`、`dataclaw-web:directory-sync:run`。
-- 本地回调使用 http://localhost:3131/auth/callback 和 http://localhost:3131/auth/logout/callback。DEV 回调使用 http://dataclaw-web0-auth3.dev.jinxin.cloud/auth/callback 和 http://dataclaw-web0-auth3.dev.jinxin.cloud/auth/logout/callback。
-- 后端 DEV 域名为 dataclaw-web0-auth3-service.dev.jinxin.cloud，部署业务端口 8080（本地开发建议 3132）。客户端凭据仅供后端配置使用。
-
-当前待核验项包括角色和权限登记、客户端名称、DEV 访问地址及回调修改、API 授权、关联租户和真实调用结果。
+无
