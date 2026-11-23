@@ -14,6 +14,8 @@ DataClaw 两个 Web 端和共享服务依赖 Auth2，桌面端也经过该服务
 - 管理端新增自身应用的角色权限管理、全局租户同步管理；用户端仅迁移认证和已有目录调用。
 - 两个 Web 端核对页面预期租户，保护并发切租户，限制本地会话最长寿命，防止退出回调重放，并在部署入口启用 CSP。管理授权变更、同步配置变更和手动同步采用前置操作审计。
 
+- 统一使用 DATACLAW_WEBADMIN_APPLICATION_CODE 配置管理应用和 Base 数据源归属，服务端按租户解析应用 ID。移除 DATACLAW_WEBADMIN_APPLICATION_ID 和 AGENT_OS_APP_CODE 配置。
+
 ## Capabilities
 
 ### New Capabilities

@@ -110,3 +110,15 @@
 #### Scenario: 部署后访问
 - **WHEN** 用户在任一端完成 OAuth 登录、回调并使用业务页面
 - **THEN** 所需资源和 API 可访问，浏览器阻止策略之外的脚本、连接和表单提交，并拒绝其他页面嵌入本应用
+
+
+### Requirement: Base 调用统一应用编码
+系统 SHALL 将 DATACLAW_WEBADMIN_APPLICATION_CODE 用作 Base 调用的 appCode，数据源创建、查询、过滤及前端归属判断使用一致编码。
+
+#### Scenario: Base 数据源访问
+- **WHEN** 用户创建或查询工作区数据源
+- **THEN** 系统 SHALL 使用所配置的 WebAdmin 应用编码调用 Base，并保留租户、工作区及所有者访问限制
+
+#### Scenario: 配置切换和历史记录
+- **WHEN** 从 AGENT_OS_APP_CODE 切换到统一应用编码
+- **THEN** 系统 SHALL 移除服务端和浏览器运行配置对旧键的依赖，验证历史工作区数据源可见性；需要变更历史归属时提供明确迁移方案并在执行前确认，不得静默扩大访问范围

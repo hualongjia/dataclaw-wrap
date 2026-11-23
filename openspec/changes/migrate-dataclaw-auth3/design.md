@@ -13,7 +13,7 @@ AuthController 已有三条换票路由，共用 AuthService。两个浏览器�
 1. 每个登录事务记录目标端、一次性 state、verifier 和返回地址。管理端建议使用 /auth/admin/callback，用户端使用 /auth/web/callback，桌面沿用 dataclaw://auth/callback。桌面统一通过系统浏览器进行 OAuth 登录，移除账号密码表单、preload/IPC 密码入口和旧密码协议调用，不增加密码代登机器凭证。分别调用现有 /api/v1/{admin,web,desktop}/auth/token，服务端按目标选择 Client，以完全匹配的 redirect_uri 调用 Auth3 /oauth/token。隔离两端浏览器会话，处理失败、登出及切租户后缓存失效；采用滑动策略时允许省略 refresh_token，以 Auth3 租约验证为准，参照 p3demo 区分用户活动与后台轮询。
 2. 封装服务端机器凭证获取及过期更新。模型 API 用机器令牌调用 /api/v3/oauth/introspect 并验证用户主体；其余 AppKey、供应商、用户密钥和 quotaContext 逻辑沿用。对其他用户接口按调用端校验身份和应用权限，避免把模型 API 的外部令牌规则扩展到后台管理。
 3. 保留前端已有用户查询契约，在适配层转换 Auth3 的本人资料、授权租户、用户分页与批量人员查询结果。记忆管理用机器令牌和来自验证上下文的 X-Tenant-Id 调用 GET /api/v3/orgs/tree（org.tree），直接取 data 顶层 orgId，保留孤立父节点语义。定时消息对照现有 AuthMessageService 的收件人、渠道、附件、失败反馈逐项适配。
-4. 管理写操作调用 /api/v3/app/*，令牌归属固定为 dataclaw-admin，成员受其当前租户约束。角色管理采用统一资格查询：服务端从已验证用户身份取得角色 ID，按部署时在管理应用角色目录中核实的系统管理员角色 ID 与编码匹配。前端依据资格结果显示菜单、开放路由和操作按钮。角色、权限码、绑定及成员的每次管理读写均在服务端重新校验同一资格，替换这些入口原有的逐动作权限码门槛。同步、审计等业务入口继续按各自权限码授权。角色权限矩阵保存完整绑定，成员跨页增删提交差量；应用管理员资格与本地同步权限分别检查。
+4. 管理写操作调用 /api/v3/app/*，令牌归属为 DATACLAW_WEBADMIN_APPLICATION_CODE 指定的管理应用，成员受其当前租户约束。角色管理采用统一资格查询：服务端从已验证用户身份取得角色 ID，按部署时在管理应用角色目录中核实的系统管理员角色 ID 与编码匹配。前端依据资格结果显示菜单、开放路由和操作按钮。角色、权限码、绑定及成员的每次管理读写均在服务端重新校验同一资格，替换这些入口原有的逐动作权限码门槛。同步、审计等业务入口继续按各自权限码授权。角色权限矩阵保存完整绑定，成员跨页增删提交差量；应用管理员资格与本地同步权限分别检查。
 5. 参考 p3demo 全局目标配置、执行历史及逐租户结果模型。通过数据库唯一约束控制有效目标和目录业务键（租户、租户内用户）。每次执行快照化目标；分页完整后在单目标事务内幂等更新镜像并调和失效记录。机器授权收窄或分页失败时保留旧快照。调度采用可续租锁与数据库执行代次，过期持有者无法提交；定时任务按时间槽去重，接管时记录中断。默认调度间隔建议沿用参考项目的 30 分钟。
 
 ### 两个浏览器端的独立会话
@@ -25,6 +25,14 @@ WebAdmin 和用户 Web 分别在登录前获取本端随机 CSRF 令牌。服务
 同一环境各实例共享 Redis、键前缀和签名密钥。建议配置 `DATACLAW_ADMIN_SESSION_COOKIE_NAME`、`DATACLAW_WEB_SESSION_COOKIE_NAME`、`DATACLAW_SESSION_SECRET`、`DATACLAW_SESSION_REDIS_PREFIX`。两端 Cookie 名称须不同，密钥由部署环境独立生成，至少 32 个随机字节；示例文件只留占位。Cookie 沿用现有 Secure、SameSite 和 Domain 设置。
 
 切租户成功时轮换会话 ID 并原子失效旧会话，退出时撤销当前端会话。并发中的旧请求不能回写或恢复失效记录。租约以 Auth3 验证结果为准，后台读取 Redis 不得延长用户登录有效期。固定令牌是否在剩余五分钟时刷新待单独确认。
+
+### 统一应用编码配置
+
+部署填写 DATACLAW_WEBADMIN_APPLICATION_CODE，例如 dataclaw-admin。移除 .env、.env.example 和部署配置中的 DATACLAW_WEBADMIN_APPLICATION_ID 与 AGENT_OS_APP_CODE；新编码必填，不回退到旧键或固定编码。
+
+参照 p3demo，服务端用机器凭证调用 GET /api/v3/tenants/applications?tenantId=...，租户取自已验证身份。按 applicationCode 精确匹配唯一且 status=enabled 的应用，取得十进制字符串 applicationId，再查询 GET /api/v3/users/permissions?userId=...，仅保留该 ID 的权限项。解析结果按租户隔离。应用缺失、重复、停用、响应契约无效或上游故障时返回 503 并拒绝受保护操作。机器 Client 需获得租户应用列表查询授权。角色管理资格继续独立按已验证用户及系统管理员角色判断。
+
+Base 的 appCode 统一读取 DATACLAW_WEBADMIN_APPLICATION_CODE。数据源创建、查询、列表过滤以及前端归属判断使用同一编码，移除浏览器 runtime 对旧 AGENT_OS_APP_CODE 的依赖和固定编码比较。部署前盘点历史数据源归属，验证既有租户、所有者和工作区访问；需要迁移旧 appCode 时先形成明确方案并在执行前确认，不因切换配置静默丢失记录或扩大权限。
 
 ### 后台管理资格探测
 

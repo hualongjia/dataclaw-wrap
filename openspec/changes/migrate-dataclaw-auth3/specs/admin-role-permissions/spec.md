@@ -58,3 +58,19 @@
 #### Scenario: 执行结果回写
 - **WHEN** 操作完成、明确失败或结果未知
 - **THEN** 分别记录成功、失败或待核实，终态回写失败时保留原意图供核对，禁止自动重放
+
+
+### Requirement: 按应用编码解析权限归属
+系统 SHALL 使用 DATACLAW_WEBADMIN_APPLICATION_CODE 配置管理应用，在已验证用户的当前租户内解析唯一启用的 applicationId，并按该 ID 精确过滤用户权限。
+
+#### Scenario: 权限归属解析
+- **WHEN** 用户请求本应用权限
+- **THEN** 服务端 SHALL 用机器凭证查询当前租户应用列表，按配置编码解析唯一启用的应用 ID，并仅采用该 ID 对应的权限项，解析结果按租户隔离
+
+#### Scenario: 解析失败
+- **WHEN** 应用缺失、重复、停用、返回字段无效或上游不可用
+- **THEN** 系统 SHALL 返回 503 并拒绝受保护操作，不采用其他应用的同名权限
+
+#### Scenario: 配置收敛
+- **WHEN** 部署 Auth3 管理应用
+- **THEN** 系统 SHALL 要求配置 DATACLAW_WEBADMIN_APPLICATION_CODE，移除 DATACLAW_WEBADMIN_APPLICATION_ID 和 AGENT_OS_APP_CODE，缺少新键不得通过旧键继续授权
