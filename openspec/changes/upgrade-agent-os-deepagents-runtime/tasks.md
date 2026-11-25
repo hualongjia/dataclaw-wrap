@@ -19,10 +19,10 @@
 
 ## 4. Web 消费端验证
 
-- [ ] 4.1 在 dataclaw-web 的 ChatPage 与 useConversationRuntime 验证实时文本、计划进度、审批与最终结果，按需适配，运行相关 Vitest 用例及 build。
-- [ ] 4.2 在 agent-os-web 的会话任务详情核对同一会话的状态、消息及工具结果与聊天端一致，按需适配并运行 agent-os-web 的 check-types 和 build。
+- [x] 4.1 在 dataclaw-web 的 ChatPage 与 useConversationRuntime 验证实时文本、计划进度、审批与最终结果，按需适配，运行相关 Vitest 用例及 build。
+- [x] 4.2 在 agent-os-web 的会话任务详情核对同一会话的状态、消息及工具结果与聊天端一致，按需适配并运行 agent-os-web 的 check-types 和 build。
 
 ## 5. 空库端到端验收
 
-- [ ] 5.1 按部署顺序在隔离环境使用新版制品与正式 SQL 初始化空库。创建多轮会话，在工具暂停时重启服务，从 Web 批准并续聊；核对原线程、历史顺序、审批计数和两个 Web 的最终记录。
-- [ ] 5.2 汇总依赖树前后对比、空库 postcheck、构建和测试结果，并记录端到端会话与工具调用标识，使验收结果可复核。
+- [x] 5.1 按部署顺序在隔离环境使用新版制品与正式 SQL 初始化空库。创建多轮会话，在工具暂停时重启服务，从 Web 批准并续聊；核对原线程、历史顺序、审批计数和两个 Web 的最终记录。
+- [x] 5.2 汇总依赖树前后对比、空库 postcheck、构建和测试结果，并记录端到端会话与工具调用标识，使验收结果可复核。
