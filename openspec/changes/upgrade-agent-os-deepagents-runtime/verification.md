@@ -89,7 +89,7 @@ Prisma/数据库 claim 函数与 DeepAgent/PostgresSaver，在中断后重建服
 | 检查 | 结果 |
 | --- | --- |
 | agent-os-service check-types、build | 通过 |
-| 会话/线程/心跳 Jest 三套 | 55/55 通过 |
+| 会话/线程/心跳 Jest 三套 | 57/57 通过 |
 | dataclaw-web 全量 Vitest | 229/229，52 套通过 |
 | dataclaw-web build | 通过 |
 | agent-os-web check-types、build | 通过 |
@@ -117,3 +117,25 @@ Web 批准及续聊，再通过 Agent OS SessionTaskDetailView 对照同会话�
 记录真实 Web 会话与调用标识后才能完成 4.1、4.2、5.1、5.2。当前不声称已完成这些验收。
 
 本机详细日志暂存 `/tmp/dataclaw-runtime-upgrade/`；可复现脚本已提交到代码仓库。
+
+## 第二轮静态评审修复
+
+发现原生产普通续聊为每个新 assistant 创建独立 thread，并只注入业务表文本历史，首轮工具
+独有结果会丢失。现保留每轮线程及审批绑定，在新轮从所选历史的上一 assistant thread 调用
+图 getState 重建完整增量消息（含 AI 工具调用与 ToolMessage），再传入新 thread；重生成
+只选择截断后的历史。若上一轮仍有工具审批中断，拒绝新轮并提示先处理原审批，避免复制
+悬空工具调用。checkpoint 缺失时保留既有业务历史回退。
+
+新增 `cross-turn-smoke.cjs` 走生产 streamChatResponse、实际 DeepAgent/PostgresSaver：
+conversation `1795580998971`，首轮 `conversation:1795580998971:assistant:1` 工具
+`unique-tool-result` 返回 `tool-only-b054d3a8-f994-4c31-be82-e97775fa29e8`，首轮最终
+仅答 `done`；关闭并重建服务数据库连接后，新轮 `assistant:2` 的模型可读到该工具独有
+结果并回答同一标识，图状态 6 条消息且仅一个 ToolMessage。此补充覆盖了此前同线程
+smoke 没有覆盖的生产跨轮线程策略；仍不替代待完成的真实 Web/进程重启验收。
+
+同时强化流回归断言：plan-1 必须成功，write-1/write-2 恰一成功一失败，失败必须为同路径
+并发冲突。KMS 闭包解析加入 pnpm 包别名支持，任何未解析非 link 依赖立即失败；重新
+比较基线与现锁仍完全一致，SHA256 与上文相同。
+
+第二轮修复后 service build/check-types、57 项会话 Jest、强化stream smoke、跨轮PG smoke
+及原审批并发/拒绝 smoke 均通过。
