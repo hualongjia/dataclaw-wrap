@@ -89,7 +89,7 @@ Prisma/数据库 claim 函数与 DeepAgent/PostgresSaver，在中断后重建服
 | 检查 | 结果 |
 | --- | --- |
 | agent-os-service check-types、build | 通过 |
-| 会话/线程/心跳 Jest 三套 | 57/57 通过 |
+| 会话/线程/心跳 Jest 三套 | 60/60 通过 |
 | dataclaw-web 全量 Vitest | 229/229，52 套通过 |
 | dataclaw-web build | 通过 |
 | agent-os-web check-types、build | 通过 |
@@ -139,3 +139,23 @@ smoke 没有覆盖的生产跨轮线程策略；仍不替代待完成的真实 W
 
 第二轮修复后 service build/check-types、57 项会话 Jest、强化stream smoke、跨轮PG smoke
 及原审批并发/拒绝 smoke 均通过。
+
+## 第三轮静态评审修复
+
+重建的图消息现在接收 Agent 配置的 contextBudget，沿用历史字符长度除以4的估算和从
+最新向前保留后缀的策略，工具调用参数也计入成本。AI tool_calls 与全部对应 ToolMessage
+作为原子组保留或丢弃，避免预算截断产生孤立工具结果；当前轮 user 输入始终独立保留。
+未设置有效正预算时保持现有不裁剪语义。
+
+新消息入口读取会话后立即检查持久化未决审批，在任何执行上下文解析、业务写入、通知
+或响应准备之前拒绝；保留原会话/待审批消息，原审批入口不变。新线程显式继承前轮 todos，
+无需本轮再次调用 write_todos。
+
+扩展实际PG cross-turn smoke：conversation 1795581267085，首轮保存 in_progress 待办及
+10KB 工具结果；重建数据库服务连接后，第二轮预算4000仍读到工具独有标识
+`tool-only-6b460033-5471-4734-a2c0-565388731b30`，8条消息；第三轮预算100整组排除大工具
+交互且保留当前user，两轮新thread的todos均保持同一进度。直接调用生产新消息入口验证
+未决审批被拒绝时未访问业务写入上下文、未写响应，会话和原审批消息不变。
+
+新增预算工具组单元回归；service build/check-types 和60项相关Jest全部通过。上述仍是
+组件及隔离PG验证，真实Web与完整进程重启的剩余验收边界不变。
