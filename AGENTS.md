@@ -1,7 +1,5 @@
 # AGENT
 
-## 项目路径索引
-
 ## Git Commit 规范
 
 - `git commit` 提交信息使用中文描述。
@@ -42,8 +40,3 @@ chore(dataclaw): 更新 eslint 与 prettier 配置
 ### 主键生成约定
 
 - 如果表主键是 `int(8)` / `BIGINT` 语义的自增主键，新增记录时默认使用雪花 ID 生成，不依赖数据库自增。
-
-## OpenSpec 文档规范
-
-- `openspec/changes/**` 与 `openspec/specs/**` 下的规划文档、设计文档、任务清单和规格说明默认使用中文编写。
-- OpenSpec 解析依赖的固定结构关键字可保留英文，例如 `## ADDED Requirements`、`### Requirement:`、`#### Scenario:` 和任务 checkbox 格式。
