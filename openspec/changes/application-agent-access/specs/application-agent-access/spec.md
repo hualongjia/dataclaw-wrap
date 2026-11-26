@@ -15,6 +15,11 @@
 - **WHEN** 管理员为应用选择 web 和 api，为 Agent 选择 web 和 desktop 并保存
 - **THEN** 刷新后两组选择分别保留；两端均可按所含渠道筛选 Agent，表单不再提供 both、lite 或 agentos。
 
+#### Scenario: 历史渠道迁移
+
+- **WHEN** 升级旧应用和 Agent 的入口类型
+- **THEN** web、desktop、api 单值转换为单项数组，Agent both 转换为 [web, desktop]；历史应用 lite 转换为 [web]，agentos 转换为 [api]，已有 App-Key 保持不变。
+
 ### Requirement: 双向维护应用绑定
 
 系统 SHALL 允许具备应用编辑权限的用户在新增和编辑时选择本租户多个 Agent，并从绑定集合中指定至多一个默认项。
