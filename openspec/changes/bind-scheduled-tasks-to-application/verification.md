@@ -109,3 +109,43 @@ DataClaw Web同一真实用户本应用列表为0，直接访问P3活动任务38
 最终跟踪为8/20；剩余未勾项包含真实同租户第二用户、其他租户身份及各应用授权测试数据矩阵、管理员权限正反例、P3空间负例/DataClaw空间正例、多页历史/父子执行错配、通知实际投递以及已发布并授权子Agent的完整多轮usage/预算/两端页面对账。已完成的本人P3页面生命周期、正常工具审批创建、同来源删除/解除恢复与本人跨应用读取拒绝不等同于这些未完成矩阵。当前P3 Agent无子Agent绑定且关闭通用子Agent；没有为补验擅自建立新身份或启用其他停用Agent。
 
 最终代码：DataClaw784a6081、P3Demo6cf7bfb。P3本地临时env原文备份仍为/tmp/scheduled-task-p3-env-backup（0600，无秘密入git）；还原目标为/Users/hualong/jxworkspace/p3demo-wrap/p3demo/apps/service/.env所指向的实际文件/Users/hualong/jxworkspace/p3demo-wrap/p3demo.apps.service.env，保持0600并重启P3 Service才生效。本地授权测试环境保留供后续补验；本次全部4测试任务已软删，无活动验收计划遗留。
+
+
+## 用户接受未验证后收尾（2026-11-27）
+
+此前8/20反映当时保守的复合场景跟踪，并非其余实现未完成。用户现明确接受另一用户、另一租户身份及可运行子Agent才能完成的真实完整矩阵和用量对账为 **accepted-not-tested**。不冒用身份，不删规范，不把豁免计为测试通过。已据任务原文字重新核对证据：不要求真实联调的场景可使用unit/DB验证；明确真实联调的条目保留实际证据。
+
+新增实测：DataClaw当前真实hualong用户在空间111（383891906466721792）创建任务384714547513491456，详情显示空间111/custom、每天09:00。暂停后管理端同租户列表、汇总与详情均可见相同状态；通过正常管理端删除后列表/汇总0。P3个人真实会话384714989152731136批准create_scheduled_task携带workspaceId="1"，生产validateTaskReferences报“来源会话不可访问”，拒绝个人来源附加空间且没有写任务。首次长数字ID被既有PII掩码后仅报numeric格式错，不算空间权限实测。P3显示output-denied/受控流错误，权限结论来自对应生产工具日志和无写入只读核对，不夸称页面完整友好错误展示；未扩展通用PII或SSE范围。
+
+全部5个验收任务（此前4个及新空间任务）均正常删除，只读核对ifDelete=1；新增负例会话也正常删除且ifDelete=1，无活动验收计划。没有外发测试邮件或Webhook消息。
+
+### 最终逐项证据映射
+
+|任务|已完成证据|接受未验证/限制|
+|---|---|---|
+|1.1–1.2|迁移/postcheck及应用回填真实DB重跑、有效/冲突/NULL/损坏样本，见前文提交链|无新增豁免|
+|2.1|23a865c0生产创建写入分支忽略伪造creator/application/tenant；管理员复制新ID与当前可信归属、跨应用拒绝；原凭据归属/creator回归；Web路由只有11接口，templates/copy不在业务控制器|复制为服务回归，不是管理UI实测（UI无复制入口）|
+|2.2|application-scope匹配/冲突/空归属、原凭据校验；真实DB失效候选暂停及领取无越权派发|无须额外真实身份|
+|2.3|真实授权聊天A/B来源当前会话、空间空、列表定位；tool unit覆盖缺省/0及可信source；references覆盖来源三维归属和有效空间关系|跨用户/跨租户真实矩阵accepted-not-tested；已有自动化不丢弃|
+|2.4|references与事务/撤成员/启动删除串行DB回归，前文已完成|无新增豁免|
+|2.5|P3真实个人来源携空间拒绝；P3写schema及服务references覆盖显式/知识/来源/间接空间；DataClaw真实空间任务创建成功|并未声称所有空间组合均真实HTTP实测|
+|2.6|真实同来源A/B、历史保留、删源A继续/B暂停、解除后仍paused再显式恢复；旧触发采用DB回归|不声称真实旧队列重放|
+|3.1|scope helper固定tenant/app/creator，list测试及过滤where/汇总共用作用域；真实本人跨应用列表0与管理汇总核对|跨用户/跨租户真实完整矩阵accepted-not-tested|
+|3.2|四读父授权在同步前拒绝；23a865c0五写拒绝无事务/派发；缺可信应用与Auth3/App-Key边界回归；本人跨应用真实404|跨用户/跨租户真实完整矩阵accepted-not-tested|
+|3.3|scope管理仅本租户；PermissionGuard授权/拒绝回归；真实管理列表/详情/删除；后台原creator与凭据的回归/DB派发|其他真实身份/租户矩阵accepted-not-tested；未改真实用户角色来制造无权限身份|
+|3.4|P3真实11操作生命周期；Service逐项方法路径和当前用户/App-Key头回归；DC配置/状态及跨应用读取对照|无新增豁免|
+|3.5|P3真实暂停编辑仍paused、UTC恢复新计划、manual执行、删除不可见；五写授权回归|同应用他人真实矩阵accepted-not-tested，本人跨应用五写为自动化作用域证据|
+|3.6|实际P3历史/单次/按需统计及原始usage预算；新增page2/exclude及父子错配回归；父任务先授权无同步回归|真实跨身份完整矩阵accepted-not-tested；多页为定向回归，不制造大量模型执行|
+|3.7|真实P3页面完整生命周期，见既有详细记录|无新增豁免|
+|3.8|36eb4030更新11上游/转发文档和README状态；真实P3空间拒绝、DC空间正例、真实两类删源及相应接口链|通知目的地/深链/故障为已有自动化证据，不宣称真实外发投递|
+|4.1–4.3|采集/parser、真实DB ledger/恢复/迁移及两端schema/UI检查，见前文；实际单模型usage与预算一致|无新增豁免|
+|4.4|真实单模型已记录；多轮/子Agent完整实际对账未运行|accepted-not-tested，用户明确接受跳过，不是passed|
+
+新增23a865c0仅测试：application-scope 14/14与tsc通过，覆盖伪造身份创建、复制和五写拒绝、历史分页/排除/父子错配。第15轮之后没有生产实现变化，仅测试/文档更新，不发起第16轮静态评审。P3未变沿用完整verify，DataClaw未变的生产模块沿用先前验证。
+
+最终20/20追踪项已处理，**包含accepted-not-tested，不等于20项全部实测通过**。无需为了已接受跳过范围再索要身份或授权；将来若补验，可按上文真实矩阵继续。临时本地env/备份和create_scheduled_task工具授权按前述方式可还原，秘密未提交；保留用户原有P3父docs改动。
+
+
+补充收尾检查：PermissionGuard、scheduled-tasks.references、scheduled-task-delivery-targets及notifications.application-links共4 suites/26项通过，覆盖管理员权限正反例、全部显式/间接空间引用策略、可信深链/无配置无外链及Webhook精确登记限制。没有外发真实通知，未将该自动化结果称为实测投递。用户豁免仅真实跨身份完整矩阵和真实多轮/子Agent对账，没有泛化为通知/空间等所有场景免验。
+
+临时配置已还原：核对当前P3 env与原备份仅P3DEMO_AGENT_OS_BASE_URL、P3DEMO_AGENT_OS_APP_KEY两项不同，没有期间新增env改动；已恢复原备份字节并维持0600，P3 Service按原环境重启（日志/tmp/scheduled-task-p3-service-restored.log）。原备份/tmp/scheduled-task-p3-env-backup保留0600，未输出凭据。正常管理端create_scheduled_task授权保留，原get_weather未撤销。本次没有更改Auth3全局规则。P3父用户docs改动保留。此前“临时本地环境保留”描述为历史状态，以本条已还原为准。
