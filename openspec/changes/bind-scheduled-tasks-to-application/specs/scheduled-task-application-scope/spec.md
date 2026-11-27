@@ -164,3 +164,11 @@ Agent OS Web 定时任务管理入口 SHALL 允许具备 `agentos:job:view` 权�
 #### Scenario: 缺失上报、持久化故障与重启
 - **WHEN** usage 缺失，或进程无法证明所有模型请求均已登记
 - **THEN** 完整总量为未知，保留已确认下限，终态未结账可重入补偿，记录故障不改变模型原始响应
+
+
+### Requirement: 第三方业务用户内省
+系统 SHALL 为11个业务任务接口接受同Auth3 Issuer的有效外部Client用户令牌，以active/access/sub/tid确定身份，并以本租户有效App-Key确定应用，继续按创建人隔离；不得新增Client与应用绑定要求或放宽管理及登录策略。
+
+#### Scenario: 外部Client用户调用任务
+- **WHEN** 用户携带经内省有效的用户令牌及该用户租户的有效应用Key请求任务业务接口
+- **THEN** 按该用户、租户、应用处理；无效令牌、跨租户Key和未授权父任务被拒，管理与登录仍保留原Client规则

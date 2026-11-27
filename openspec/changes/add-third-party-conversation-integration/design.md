@@ -74,3 +74,10 @@ P3Demo 的 `AiChatPage.tsx` 目前为受租户功能开关控制的占位页。�
 ## 实施范围记录
 
 2026-11-27 用户明确授权本变更同时修改本仓库与独立兄弟项目 `/Users/hualong/jxworkspace/p3demo-wrap/p3demo`。P3Demo 作为既定首个接入方，遵循自身 AGENTS.md、提交与验证要求；此授权仅扩展代码编辑位置，不增加产品功能。实际部署、存量应用范围配置与真实身份验收状态分别记录，不以本地测试代替。
+
+
+## 第三方用户认证补充（真实联调确认）
+
+Auth3机器内省契约允许验证其他Client签发的同Issuer用户令牌。业务用户身份取active且token_use=access的sub/tid；App-Key必须在该tid内有效，应用归属从Key解析，不新增clientId/appId绑定。固定admin/web/desktop Client限制继续用于原登录与管理边界。
+
+任务11操作及本会话契约所需Agent列表/详情、最近会话、新建、详情、标题/配置、置顶、删除、消息流、取消、重新生成详情和工具审批流，按精确HTTP方法及路径采用独立外部用户策略，不能用宽泛前缀或借用externalModel放开。Agent仍须已发布并绑定当前应用；会话仍按tenant/application/creator和配置范围先授权。管理、文件、技能/MCP等非本期资源入口不随之开放。
