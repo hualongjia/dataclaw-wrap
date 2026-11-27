@@ -176,7 +176,7 @@ Agent OS Web 定时任务管理入口 SHALL 允许具备 `agentos:job:view` 权�
 
 ### Requirement: 定时任务不提供 Webhook 投递
 
-系统 SHALL 不再提供定时任务 Webhook 发送或签名能力。新建、编辑等写入 SHALL 拒绝 `webhook_notification` / `external_notification` 通道及 `webhookUrl` / `webhookSecret` 字段；可信前端路由、邮件和站内通知保持可用。
+系统 SHALL 不再提供定时任务 Webhook 发送或签名能力。新建、编辑等写入 SHALL 拒绝 `webhook_notification` / `external_notification` 通道及 `webhookUrl` / `webhookSecret` 字段；邮件和站内通知保留正文及结果，不提供详情外链配置。
 
 #### Scenario: 新请求携带旧字段
 - **WHEN** 新写入选择已下线通道，或任意保留通道携带旧URL/secret字段（包括null）
@@ -185,3 +185,16 @@ Agent OS Web 定时任务管理入口 SHALL 允许具备 `agentos:job:view` 权�
 #### Scenario: 历史策略仍可查看编辑执行
 - **WHEN** 读取、执行或复制历史webhook_notification/external_notification策略
 - **THEN** 投递归一为detail_only，响应和副本策略不包含旧URL/secret，不执行Webhook网络请求；原始历史JSON无需破坏性迁移，用户可以用归一策略继续编辑并从P3Demo/DataClaw查看结果
+
+
+### Requirement: 定时任务通知不提供前端外链配置
+
+系统 SHALL 不读取或维护定时任务前端路由配置，不在站内/邮件任务通知生成任务或执行外链，不硬编码替代地址。用户 SHALL 可以主动在P3Demo/DataClaw任务页面查看详情、执行历史及结果。
+
+#### Scenario: 历史通知携带旧外链
+- **WHEN** 读取或点击带任务/执行URL或本地跳转标记的历史任务通知
+- **THEN** 服务不返回这些外链/跳转标记，前端只处理正文及标已读，不导航至旧地址或以当前应用错误打开其他应用任务
+
+#### Scenario: 新通知及环境配置
+- **WHEN** 定时任务发送站内或邮件通知
+- **THEN** 保留结果/状态内容但不附配置生成的详情链接，本地及DEV/DEMO环境不再维护前端路由变量，主动任务页面入口不受影响

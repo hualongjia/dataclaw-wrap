@@ -48,3 +48,9 @@
 - [x] 5.1 删除定时任务Webhook发送、签名与目标配置；服务写入拒绝已删除通道/字段，历史webhook_notification/external_notification读取、执行及复制归一detail_only，响应不暴露URL/secret且不出站，编辑可继续；保留邮件、站内通知与可信前端路由，无破坏性迁移。
 - [x] 5.2 删除DataClaw及Agent OS定时任务Webhook选项、字段、展示和类型；P3写模型严格拒绝通道/字段、读模型清理旧策略；移除turbo/.env.example目标配置，不影响无关Webhook能力。
 - [x] 5.3 更新规范、设计、接入文档及验证证据，通过服务回归/tsc、两Vue前端类型检查、P3完整verify；部署资料仅静态核对，不部署，不追加第16轮独立静态评审。
+
+## 6. 用户追加：移除通知前端路由配置
+
+- [x] 6.1 删除前端路由配置读取、通知/邮件外链生成及无用途helper；历史通知URL/本地跳转标记不返回，前端不消费旧任务跳转，结果正文和用户主动任务页面查询保留。
+- [x] 6.2 删除turbo、env示例、本地service env及部署DEV/DEMO env中的前端路由配置，更新服务接入/部署资料；保留其他runtime配置及P3 env，无硬编码替代，不运行部署测试/构建/发布。
+- [x] 6.3 通过服务通知/邮件回归、service tsc与DC/管理Vue类型检查，记录无新增独立静态评审；不重复运行无变更P3验证，原accepted-not-tested范围不变。

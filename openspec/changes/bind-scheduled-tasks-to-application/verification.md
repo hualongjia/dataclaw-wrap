@@ -162,3 +162,14 @@ DataClaw Web同一真实用户本应用列表为0，直接访问P3活动任务38
 验证：服务先红后绿，旧两通道读/执行不出网、废弃通道/字段拒绝、归一编辑合法、复制剔除旧字段；scheduled模块76项通过、23项真实DB测试按默认开关跳过（无DDL变化、不冒称重跑）；随后新增历史外部错误反例，service suite20项通过，通知链接/敏感字段回归通过。service tsc通过；DC vue-tsc与Agent OS Web check-types通过；P3 shared109项及完整pnpm verify通过（14/14构建任务成功，11缓存）。提交hook的ESLint/Prettier通过。首轮服务commit hook发现删除旧测试后的未使用import，已清理后正常提交，未绕过检查。
 
 5.1–5.3按上述完成，不归入用户豁免。当前23/23为追踪项已处理，仍含原其他身份真实完整矩阵及实际多轮/子Agent对账的accepted-not-tested；不是23项全部真实联调通过。本次没有新增模型调用/外发测试通知或改动真实数据；本地env及其run timeout、备份路径、P3父用户docs保持原状态。上线需发布新服务/前端产物，本次未部署，既有运行实例不会因源码提交自动更新。
+
+
+## 用户追加：删除通知前端路由配置（2026-11-27）
+
+用户明确取消服务器前端路由配置及通知外链，当前只从P3Demo/DataClaw页面主动看结果。代码57cbc6cf删除路由helper、配置读取、站内通知links参数/生成、邮件附加详情链接；通知列表不再查应用映射生成跳转，所有任务通知读模型清除历史taskDetailUrl/executionDetailUrl/canOpenLocalTask。DC删除旧通知导航helper；任务通知仅展示和标已读，不导航至旧外链或错误本地任务，聊天通知仍保留会话/消息导航。P3/DC主动详情/历史/ID定位不变，无硬编码替代外链。
+
+配置清理：turbo、service .env.example及本地service .env精确移除目标变量；部署内仓61cb6de5只删DEV/DEMO agent-os-service/configmap/.env各一配置行，部署父资料69d9780同步发布说明。未输出任何秘密，没有更改无关runtime-args，也未修改P3本轮.env/run timeout。部署仓库遵守仅静态检查，未测试、构建、启动、Jenkins或发布；发布人员仍需发布新产物/刷新Pod并核验环境，不能将源码提交称为环境已生效。
+
+验证：notifications.application-links与scheduled-tasks.service共23项通过，覆盖历史外链/本地标记不返回、新站内通知无links且结果正文可读、邮件保留结果不附href/详情链接；service tsc、DC vue-tsc、Agent OS Web check-types通过，提交hook ESLint/Prettier通过。新增邮件fixture首轮缺errorMessage导致测试失败，补齐fixture后通过，未修改生产行为绕过检查。无变更P3沿用前次完整verify，不额外重跑。本次生产变化没有独立静态评审，遵守15轮上限，不开启第16轮。
+
+6.1–6.3为本次新增已验证事项，不纳入原真实跨身份/多轮子Agent豁免。最终26/26追踪项已处理仍含此前accepted-not-tested，不能表述为26项全部真实验收通过；前文保留可信路由及变量的说明为历史状态，以本次移除为准。定时任务Webhook能力保持删除，邮件/站内正文保留，不动无关Webhook、聊天通知或普通页面。
