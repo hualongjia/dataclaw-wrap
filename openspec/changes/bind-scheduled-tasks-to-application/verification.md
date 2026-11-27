@@ -103,3 +103,9 @@ DataClaw Web同一真实用户本应用列表为0，直接访问P3活动任务38
 剩余真实验收需同租户第二用户与其他租户的合法登录、各应用/空间的授权测试数据，以及已发布并授权的测试子Agent。之后按上方矩阵完成跨用户/跨租户全部读写、管理权限正反例、历史多页与执行父子错配、P3空间引用负例及DataClaw空间正例、实际子Agent多轮usage/预算/两端页面核对及通知配置联合验收。当前不创建或冒用这些身份，不将本次8/20标为全部完成。
 
 第15轮同轮修复：2e208461将可信业务sourceConversationId与推理conversationId/thread分离，仅经过会话授权的消息/审批入口显式注入来源；runtime默认null，定时执行与eval临时线程不冒充业务会话，非聊天执行可创建独立custom后续任务。78607655在两条审批续流中用服务端expectedApprovalActions初始化工具名，标准output没有重放input也保留仅可信scheduledTaskId，其他PII仍脱敏。tsc与86项定向测试通过，覆盖真实会话/定时/eval线程来源、定时首轮及审批上下文、无input重放的真实PII规则输出。这两修复为回归证据，不冒充新增真实模型实测；保留8/20完成状态，待本轮静态复核闭环。
+
+第15轮最终闭环：784a6081补齐两处已授权聊天自动续写的sourceConversationId，并拒绝非聊天显式null上下文中模型伪造conversation/sourceId；定时及eval保持独立来源语义。tsc及79项定向回归通过。已用rg核对全部生产初始/续写/审批/定时/eval入口。gpt-6.2-astra high在本次第15/15轮只读静态复核DataClaw784a6081与P3Demo6cf7bfb，确认两项P2均关闭，未发现其他可行动问题，评审在15轮结束，不开启第16轮。此次仅补记录，不改实现或重复运行测试。
+
+最终跟踪为8/20；剩余未勾项包含真实同租户第二用户、其他租户身份及各应用授权测试数据矩阵、管理员权限正反例、P3空间负例/DataClaw空间正例、多页历史/父子执行错配、通知实际投递以及已发布并授权子Agent的完整多轮usage/预算/两端页面对账。已完成的本人P3页面生命周期、正常工具审批创建、同来源删除/解除恢复与本人跨应用读取拒绝不等同于这些未完成矩阵。当前P3 Agent无子Agent绑定且关闭通用子Agent；没有为补验擅自建立新身份或启用其他停用Agent。
+
+最终代码：DataClaw784a6081、P3Demo6cf7bfb。P3本地临时env原文备份仍为/tmp/scheduled-task-p3-env-backup（0600，无秘密入git）；还原目标为/Users/hualong/jxworkspace/p3demo-wrap/p3demo/apps/service/.env所指向的实际文件/Users/hualong/jxworkspace/p3demo-wrap/p3demo.apps.service.env，保持0600并重启P3 Service才生效。本地授权测试环境保留供后续补验；本次全部4测试任务已软删，无活动验收计划遗留。
