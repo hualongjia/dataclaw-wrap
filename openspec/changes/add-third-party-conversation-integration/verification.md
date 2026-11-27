@@ -72,3 +72,13 @@ DataClaw `ee7b6096`：保留原文及合并运行文本的护栏拒绝结果，�
 第六轮全量静态评审未发现新的确定缺陷，第五轮输入护栏拒绝被覆盖的原触发已确认修复。该结论不代表部署或真实第三方端到端验收通过；任务4.1–4.4仍保持未完成。
 
 验收前由用户确认目标部署环境并审核完整租户/应用ID/范围清单，之后才能执行迁移与部署。本次仅只读核查配置和登记：P3Demo当前配置Agent OS开发地址为 `http://agent-os-service.dev.jinxin.cloud`，现有目标schema尚无会话范围列；未部署、未修改现存应用数据，也未模拟或提取真实登录凭据。
+
+## 已授权数据库迁移审计（2026-11-27）
+
+用户明确授权后，使用仓库原脚本 `dataclaw/database/migrations/server/samatrix/20261127_000001_add_application_conversation_scope.sql` 更新 `10.1.2.42:7300/samatrix?schema=samatrix_auth3_new`；未修改迁移文件。脚本 SHA-256：`2e36dccbb240cea1ef4a5b2167ff8d0a30a6c969ecdb32bfa2b04fb06724ab68`。
+
+执行前只读确认目标身份 `seaboxsql`、范围列及迁移登记均不存在、清单覆盖全部5个未删除应用。租户 `1167337764142780417` 的最终清单：`383851887451344896`、`383851887510065152`、`383851887535230976`、`383851887560396800` 为 `personal_and_workspace`；P3Demo `384539783976620032` 为 `personal_only`。
+
+原脚本事务于 `2026-11-27 18:01:06+08:00` 成功提交：更新5行、新增迁移登记1行。后置只读核验全部通过：字段为 `varchar(32) NOT NULL DEFAULT 'personal_only'`，两值CHECK已验证，5项范围与清单一致；登记 `20261127_000001_add_application_conversation_scope` 的声明校验和为 `0468dc88424c8cccefedcc47ef854c14f50c36a682dd283e4b809ff8c20c22ee`、执行者 `seaboxsql`。应用总行数仍为5，排除新增列后的既有列指纹不变；原27条迁移登记数量及指纹不变。无数据库执行错误，未输出凭据。
+
+详细无秘密审计：`/tmp/dataclaw-conversation-scope-migration-audit.json`。此次仅更新数据库，未部署服务、未执行真实端到端验收；任务4.1–4.4继续未勾选。
