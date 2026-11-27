@@ -63,3 +63,5 @@ pnpm verify
 独立证据：parser 12 项；真实 PostgreSQL ledger 3 项和派发 10 项通过，包含多调用/幂等/故障恢复/终态重启未知覆盖/已知下限 exceeded。迁移 000002 重跑、000003 重跑、000004 升级及旧零值未知通过；postcheck 完整结构通过、事务内移除 usage_accounted_tokens 被拒并回滚。P3Demo 完整 pnpm verify 通过，DataClaw vue-tsc 通过。真实身份和供应商调用验收尚未完成，以上 fixture 不冒充真实模型实测。
 
 待真实身份补验：登录 P3Demo 后创建允许模型执行的个人任务，触发多轮/子 Agent，保存供应商原始 usage 和 executionId；核对每个物理请求只计一次、总量等于供应商总和、预算同 Token 差额增加；分别检查 P3Demo 和 DataClaw 的真实零/未知/下限显示。按原有 2.x/3.x 的多身份、来源删除及页面全流程清单继续，未完成任务保持未勾。
+
+第 9 轮后补充：服务 098ca546 在发布执行终态之前结账，running 失主回收使用未知覆盖恢复语义；个人范围读取不处理全局内存补偿队列。ledger 新增健康执行与两个服务实例并发读取统计场景，ledger 4 项 + 派发 10 项通过（连同 parser 12 项共 26 项）。postcheck cccc1459 精确核验默认表达式：完整结构通过，移除 usage_accounted_tokens、将默认改为 10、给 usage_finalized_at 加 CURRENT_TIMESTAMP 三种反例均拒绝并事务回滚。服务 tsc 与 DataClaw vue-tsc 均通过。所有真实身份验收状态不变。
