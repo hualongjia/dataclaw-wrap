@@ -39,7 +39,7 @@
 ## 服务器投递配置
 
 - 按用户决定，通知前端地址与路由放在 Agent OS 服务器配置 `SCHEDULED_TASK_FRONTEND_ROUTES_JSON`，以 `tenantId:applicationId` 为键，保存 `origin`、`taskPathTemplate`、`executionPathTemplate`。模板只允许同源相对路径，任务和执行 ID 由服务端替换；不使用客户端 Host 或转发头推断应用前端。P3Demo 使用 `/ai-chat?scheduledTaskId={taskId}&executionId={executionId}`，DataClaw Web 可按本身路由登记。未配置时保留结果和任务/执行 ID，不附外链。
-- Webhook 新写入及实际发送仅允许 `SCHEDULED_TASK_WEBHOOK_TARGETS_JSON` 中当前租户和应用登记的完整目标 URL。历史配置仍可读取；未登记目标不能发送，发送禁止重定向，失败响应不回显外部正文或内部地址。
+- 用户追加决定移除定时任务 Webhook；新写入只支持detail_only/site_notification/email_notification，并拒绝webhookUrl/webhookSecret字段（包括空值）。旧webhook_notification/external_notification在读与执行归一detail_only，响应和复制策略剔除URL/secret，编辑使用归一策略，不破坏性迁移历史JSON；删除发送/签名/目标配置。前端可信路由仍保留供站内与邮件链接使用，其他Webhook能力不在本变更范围。
 - P3Demo 立即运行使用独立的长操作等待时间，超时或连接中断后提示先查看历史确认，不自动重放。
 
 ## Risks / Trade-offs

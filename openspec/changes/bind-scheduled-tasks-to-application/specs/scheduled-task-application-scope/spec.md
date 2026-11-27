@@ -172,3 +172,16 @@ Agent OS Web 定时任务管理入口 SHALL 允许具备 `agentos:job:view` 权�
 #### Scenario: 外部Client用户调用任务
 - **WHEN** 用户携带经内省有效的用户令牌及该用户租户的有效应用Key请求任务业务接口
 - **THEN** 按该用户、租户、应用处理；无效令牌、跨租户Key和未授权父任务被拒，管理与登录仍保留原Client规则
+
+
+### Requirement: 定时任务不提供 Webhook 投递
+
+系统 SHALL 不再提供定时任务 Webhook 发送或签名能力。新建、编辑等写入 SHALL 拒绝 `webhook_notification` / `external_notification` 通道及 `webhookUrl` / `webhookSecret` 字段；可信前端路由、邮件和站内通知保持可用。
+
+#### Scenario: 新请求携带旧字段
+- **WHEN** 新写入选择已下线通道，或任意保留通道携带旧URL/secret字段（包括null）
+- **THEN** 请求被拒绝，不能借旧配置恢复Webhook出站
+
+#### Scenario: 历史策略仍可查看编辑执行
+- **WHEN** 读取、执行或复制历史webhook_notification/external_notification策略
+- **THEN** 投递归一为detail_only，响应和副本策略不包含旧URL/secret，不执行Webhook网络请求；原始历史JSON无需破坏性迁移，用户可以用归一策略继续编辑并从P3Demo/DataClaw查看结果

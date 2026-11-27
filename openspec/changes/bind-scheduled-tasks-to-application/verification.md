@@ -149,3 +149,16 @@ DataClaw Web同一真实用户本应用列表为0，直接访问P3活动任务38
 补充收尾检查：PermissionGuard、scheduled-tasks.references、scheduled-task-delivery-targets及notifications.application-links共4 suites/26项通过，覆盖管理员权限正反例、全部显式/间接空间引用策略、可信深链/无配置无外链及Webhook精确登记限制。没有外发真实通知，未将该自动化结果称为实测投递。用户豁免仅真实跨身份完整矩阵和真实多轮/子Agent对账，没有泛化为通知/空间等所有场景免验。
 
 临时配置已还原：核对当前P3 env与原备份仅P3DEMO_AGENT_OS_BASE_URL、P3DEMO_AGENT_OS_APP_KEY两项不同，没有期间新增env改动；已恢复原备份字节并维持0600，P3 Service按原环境重启（日志/tmp/scheduled-task-p3-service-restored.log）。原备份/tmp/scheduled-task-p3-env-backup保留0600，未输出凭据。正常管理端create_scheduled_task授权保留，原get_weather未撤销。本次没有更改Auth3全局规则。P3父用户docs改动保留。此前“临时本地环境保留”描述为历史状态，以本条已还原为准。
+
+
+## 用户追加：移除定时任务 Webhook（2026-11-27）
+
+本次是前次15轮评审结束后的新增用户授权范围，**没有追加第16轮独立静态评审**，不宣称原评审覆盖新代码。按P3安全基线核对外部接入与数据/密钥边界：删除定时任务外发通道、默认拒绝废弃输入、保留授权/审计与正常结果查询；不涉及新网络调用、不迁移或删除历史数据。其他Skill/MCP的Webhook未改。
+
+提交：DataClaw fbaf30ac（服务发送/签名/目的地配置移除、旧策略兼容、历史通知敏感字段清理）；0261328e（DataClaw创建/编辑/详情和Agent OS只读展示/类型删除、接入文档）；P3Demo bab9287（写入严格拒绝与读取兼容）。SCHEDULED_TASK_FRONTEND_ROUTES_JSON保留；Webhook目标环境变量已从turbo和service .env.example删除。部署仓库只静态检索，未发现该变量/定时任务Webhook配置，未改部署文件、未启动/构建/发布部署。
+
+兼容行为：新请求选择webhook_notification/external_notification或在任意保留通道携带webhookUrl/webhookSecret（包括null）会拒绝。旧两通道经读模型归一detail_only、输出不含URL/secret，执行提前返回不fetch；编辑读取后的合法策略可用，管理复制将归一策略保存副本。数据库原JSON不破坏性改写。旧通知metadata删URL/secret、通道归一，历史外部投递错误不回显旧正文；执行模型没有deliveryPayload/deliveryResultJson专列，投递快照仅返回状态/时间和受控错误，保留其他渠道错误。结果仍在P3/DataClaw详情/历史，邮件、站内通知及可信前端链接保留。
+
+验证：服务先红后绿，旧两通道读/执行不出网、废弃通道/字段拒绝、归一编辑合法、复制剔除旧字段；scheduled模块76项通过、23项真实DB测试按默认开关跳过（无DDL变化、不冒称重跑）；随后新增历史外部错误反例，service suite20项通过，通知链接/敏感字段回归通过。service tsc通过；DC vue-tsc与Agent OS Web check-types通过；P3 shared109项及完整pnpm verify通过（14/14构建任务成功，11缓存）。提交hook的ESLint/Prettier通过。首轮服务commit hook发现删除旧测试后的未使用import，已清理后正常提交，未绕过检查。
+
+5.1–5.3按上述完成，不归入用户豁免。当前23/23为追踪项已处理，仍含原其他身份真实完整矩阵及实际多轮/子Agent对账的accepted-not-tested；不是23项全部真实联调通过。本次没有新增模型调用/外发测试通知或改动真实数据；本地env及其run timeout、备份路径、P3父用户docs保持原状态。上线需发布新服务/前端产物，本次未部署，既有运行实例不会因源码提交自动更新。
