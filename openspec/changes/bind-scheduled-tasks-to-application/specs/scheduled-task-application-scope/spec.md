@@ -152,3 +152,15 @@ Agent OS Web 定时任务管理入口 SHALL 允许具备 `agentos:job:view` 权�
 #### Scenario: 未配置外链或 Webhook 目标
 - **WHEN** 应用没有外链配置，或任务要求向未登记的 Webhook 地址发送
 - **THEN** 没有外链时仍保留执行结果和标识；未登记的 Webhook 写入及投递被拒，历史配置可读，外部重定向与错误正文不会被传递
+
+### Requirement: 执行统计反映实际 Token 与未知用量
+
+系统 SHALL 从原始模型 usage.total_tokens 采集执行的多轮和子 Agent 实际 Token，按物理请求及执行幂等累计原有 Token 预算，不重复叠加 gateway 计数。无供应商证据或历史记录 SHALL 标为未知并提供已确认下限，不用零冒充实测；已确认下限达到预算 SHALL 可判定 exceeded。
+
+#### Scenario: 多轮执行与重复记账
+- **WHEN** 同一执行完成多次实际模型调用且回调或结账重复
+- **THEN** 每次物理请求仅计一次，执行总量及预算与原始 usage 总量一致
+
+#### Scenario: 缺失上报、持久化故障与重启
+- **WHEN** usage 缺失，或进程无法证明所有模型请求均已登记
+- **THEN** 完整总量为未知，保留已确认下限，终态未结账可重入补偿，记录故障不改变模型原始响应
