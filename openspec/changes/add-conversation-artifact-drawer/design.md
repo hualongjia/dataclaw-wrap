@@ -20,6 +20,8 @@ Agent OS 的 `ConversationsController` 已提供会话文件树、节点内容�
 | 节点预览 | GET /artifacts/{fileNodeId}/content | GET /files/{fileNodeId}/content |
 | 原文件下载 | GET /artifacts/{fileNodeId}/download | GET /files/{fileNodeId}/download |
 
+第三方身份策略仅增加 `GET /api/v1/web/conversations/{id}/files`、`GET /api/v1/web/conversations/{id}/files/{fileNodeId}/content`、`GET /api/v1/web/conversations/{id}/files/{fileNodeId}/download` 三条精确路由，ID 限数字。仍要求有效的同租户用户令牌与登记应用 App-Key，由现有会话服务检查应用、租户、用户和个人会话范围。上传、按路径下载、工作空间文件及其他未登记路由继续拒绝，不按前缀放开。
+
 业务后端从当前会话的受信文件树提取根目录下的 `generated/` 子树并保留子目录。预览与下载使用同一归属判断，确认会话访问权限、目标节点属于该会话、节点类型为文件及其规范路径包含完整的根目录段 `generated` 后，才按节点 ID 调用上游。调用方传入的路径或消息中的链接不能作为授权依据。目录过滤用于产物读接口，现有附件处理可以继续使用会话文件树。
 
 预览保留上游的 `previewType`、`content`、`mimeType` 与 `truncated`。图片预览返回的内容字段可为空，由页面通过已鉴权的下载入口获得 Blob。HTML 在隔离的预览上下文中展示。下载端转发文件字节，保留适用的内容类型与文件名。
@@ -46,3 +48,7 @@ Agent OS 的 `ConversationsController` 已提供会话文件树、节点内容�
 ## Migration Plan
 
 依赖会话接入变更提供的个人会话授权和页面入口。先接通 P3Demo 后端的三个读取操作，再在智能问答页启用右侧抽屉，与 DataClaw 的既有会话文件接口联合验证。
+
+## 实施范围确认
+
+用户已明确授权本变更修改并提交独立项目 `/Users/hualong/jxworkspace/p3demo-wrap/p3demo`，以及上述三个精确只读上游路由的第三方身份接入与授权回归。
