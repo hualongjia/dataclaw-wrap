@@ -51,3 +51,18 @@ OpenSpec `validate --strict` 通过，任务完成后逐项刷新 apply 状态�
 - 默认镜像的依赖 audit endpoint 不存在；改用 `pnpm audit --prod --json --registry=https://registry.npmjs.org` 完成只读扫描，报告现有依赖 44 high、1 critical、45 moderate、11 low。critical 为 `proxy-addr` 的 GHSA-jqcg-44mw-7w3h，其他高危涉及 multer、undici、zod、MCP SDK 等。原始报告保存在执行机器 `/tmp/p3-artifact-dependency-audit-official.json`。
 
 本次没有改变 package 清单或锁文件，未擅自升级现存依赖。项目安全基线 `references/security-review-checklist.md` REV-18 规定未缓解高危/严重漏洞不得上线，例外需双人审批与到期时间，因此不能声明发布安全门禁已通过。本变更尚未上线，依赖处置或正式例外由用户和责任角色决定。
+
+## 第一轮静态评审修复
+
+用户已确认最终运行平台为 Linux，接受 `/proc/self/fd` 逐级目录 fd 的安全读取方案；无该能力的平台默认拒绝，不新增 native 依赖。本机为 macOS，未安装 Docker、Podman 或 Colima，因此没有将本机 mock 结果称为 Linux 真实文件系统验证。
+
+- DataClaw `c40ef4b8`：在外部会话读取边界标记安全打开，逐级使用 `O_DIRECTORY | O_NOFOLLOW` 固定目录 fd，最终文件使用 `O_NOFOLLOW | O_NONBLOCK`，确认普通文件和 fd 实际路径。预览读取该句柄，下载从同一安全句柄流转发，不按原路径重开；保持全局索引策略。`unsupported`/`image` 预览同样先确认真实文件存在并关闭句柄，缺失拒绝。修复评审项 1、3。
+- DataClaw `4e01da5a`：补同句柄下载控制器回归，记录 Linux 和物理文件存在性约束。
+- P3Demo `445453b`：下载由整文件 `arrayBuffer` 改为 Node `pipeline` 背压流转发，终端断连取消上游请求及流，补字节/文件名/取消回归。修复评审项 7。
+- P3Demo `0658c8c`：下载旧 ID 404 后刷新一次、按原完整路径找新节点并继续原下载；重开入口清理旧选择/预览/Blob；只按会话重建产物控制器，不卸载整页和同级任务草稿；隔离显式链接标签的普通路径增强，始终使用 href；空目录树保留层级且显示“暂无交付文件”。修复评审项 2、4、5、6、8。
+
+本轮 P3Demo 完整 `pnpm verify` 最终通过：Service 119 套/1168 项通过、1 项独立环境跳过，Web 115 套/695 项通过，格式、lint、全部类型检查和生产构建通过。产物 UI 共 22 项通过，后端目标 29 项通过。过程中一次未修改的认证测试出现预期 400/实际 401，单独重跑 35 项及最终完整重跑均通过，未修改或跳过该用例。
+
+DataClaw 安全/预览/索引/认证/会话授权目标 130 项通过，安全下载控制器另 1 项通过；服务 tsc 和修改文件提交 lint/format 通过。全服务最新结果：156 套/1572 项通过、12 套/132 项跳过，仍只有前文列出的三项未修改区域失败。新增 Linux 真实文件系统测试在本机 macOS 明确跳过，包含符号链接文件、目录链接、打开后路径替换及物理文件缺失场景，需在实际 Linux 环境执行后才能称实测通过。
+
+未重新改变依赖，前文依赖风险和有限扫描范围仍适用。任务进度继续为 6/8，真实登录联调 3.1、3.2 未执行，待第二轮独立静态评审。
